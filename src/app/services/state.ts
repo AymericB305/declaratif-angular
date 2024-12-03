@@ -1,4 +1,4 @@
 export type State = {
-  data: string[],
+  datas: string[],
   isCool: boolean
 }

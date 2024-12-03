@@ -9,22 +9,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class SignalService {
 
   // state
-  private internalSignalState = signal<State>({ data: [], isCool: true });
+  private internalSignalState = signal<State>({ datas: [], isCool: true });
 
   // selectors
-  signalState: Signal<State> = computed(() => this.internalSignalState());
-  sortedData = computed(() => this.internalSignalState().data.sort());
+  state: Signal<State> = computed(() => this.internalSignalState());
+  sortedDatas = computed(() => this.internalSignalState().datas.sort());
 
   // actions
-  updateData$ = new Subject<string[]>();
+  updateDatas$ = new Subject<string[]>();
 
   constructor() {
     // reducer
-    this.updateData$
+    this.updateDatas$
       .pipe(takeUntilDestroyed())
-      .subscribe(data => this.internalSignalState.set({
+      .subscribe(datas => this.internalSignalState.set({
         ...this.internalSignalState(),
-        data
+        datas
       })); 
   }
 }

@@ -9,28 +9,28 @@ import { State } from './state';
 export class ObservableService {
 
   // state
-  private internalState$ = new BehaviorSubject<State>({ data: [], isCool: true });
+  private internalState$ = new BehaviorSubject<State>({ datas: [], isCool: true });
 
   // selectors
   state$: Observable<State> = this.internalState$.asObservable();
   state: Signal<State | undefined> = toSignal(this.internalState$);
-  sortedData$ = this.internalState$.pipe(
-    map(state => state.data.sort()),
+  sortedDatas$ = this.internalState$.pipe(
+    map(state => state.datas.sort()),
   );
 
   // actions
-  updateData$ = new Subject<string[]>();
+  updateDatas$ = new Subject<string[]>();
 
   constructor() {
     // reducer
     combineLatest([
       this.internalState$,
-      this.updateData$
+      this.updateDatas$
     ])
       .pipe(
         takeUntilDestroyed(),
         distinctUntilChanged()
       )
-      .subscribe(([state, data]) => this.internalState$.next({ ...state, data }));
+      .subscribe(([state, datas]) => this.internalState$.next({ ...state, datas }));
   }
 }

@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ObservableService } from '../services/observable.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { State } from '../services/state';
 
 @Component({
   selector: 'app-imperatif',
@@ -11,29 +12,105 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class ImperatifComponent {
 
-  observableService = inject(ObservableService);
+  private observableService = inject(ObservableService);
 
-  data: string[] = [];
+  state: State | undefined = undefined;
+  signalState: State | undefined = undefined;
+  datas: string[] = [];
+  filteredDataByLength: string[] = [];
+  filteredByLengthAndFirstLetter: string[] = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   constructor() {
-    this.observableService.sortedData$.subscribe(data => this.data = data);
+    this.observableService.state$
+      .pipe(takeUntilDestroyed())
+      .subscribe(state => {
+        this.state = state;
+      });
 
-    // this.observableService.sortedData$.pipe(takeUntilDestroyed()).subscribe(data => this.data = data);
+    effect(() => {
+      this.signalState = this.observableService.state();
+    });
+      
+    this.observableService.sortedDatas$
+      .pipe(takeUntilDestroyed())
+      .subscribe(data => {
+        this.datas = data;
+        this.filteredDataByLength = data.map(x => {
+          if (x.length > 10) {
+            const sliced = x.slice(0, 10);
+            return sliced + "...";
+          }
+    
+          if (x.length < 5) {
+            return x.toUpperCase();
+          }
+    
+          if (x.length < 3) {
+            return x;
+          }
+    
+          return "";
+        });
+    
+        this.filteredByLengthAndFirstLetter = this.filteredDataByLength.map(x => {
+          const lowered = x.toLowerCase();
+          if (lowered.charAt(0) === 'a') {
+            return x;
+          }
+    
+          return lowered;
+        });
+      });
   }
 
-  someMethod() {
-    this.data = [...this.data, "toto"];
+  add(toAdd: string) {
+    this.datas = [...this.datas, toAdd];
   }
 
-  anotherMethod() {
-    this.data = [];
+  empty() {
+    this.datas = [];
   }
 
-  whateverMethod() {
-    this.data = ["titi"];
+  replaceData(newElements: string[]) {
+    this.datas = newElements;
+    this.filteredByLengthAndFirstLetter = ["toto"];
   }
 
-  saveMethod() {
-    this.observableService.updateData$.next(this.data);
+  save() {
+    this.filteredDataByLength = [];
+    this.observableService.updateDatas$.next(this.datas);
   }
 }
