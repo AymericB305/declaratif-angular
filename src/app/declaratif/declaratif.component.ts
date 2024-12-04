@@ -5,10 +5,10 @@ import { SignalService } from '../services/signal.service';
   selector: 'app-declaratif-signal',
   standalone: true,
   imports: [],
-  templateUrl: './declaratif-signal.component.html',
-  styleUrl: './declaratif-signal.component.sass'
+  templateUrl: './declaratif.component.html',
+  styleUrl: './declaratif.component.sass'
 })
-export class DeclaratifSignalComponent {
+export class DeclaratifComponent {
 
   private signalService = inject(SignalService);
 

@@ -1,6 +1,5 @@
-import { Component, effect, inject } from '@angular/core';
-import { ObservableService } from '../services/observable.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject } from '@angular/core';
+import { SynchroneService } from '../services/synchrone.service';
 import { State } from '../services/state';
 
 @Component({
@@ -12,105 +11,72 @@ import { State } from '../services/state';
 })
 export class ImperatifComponent {
 
-  private observableService = inject(ObservableService);
+  private synchroneService = inject(SynchroneService);
 
   state: State | undefined = undefined;
-  signalState: State | undefined = undefined;
   datas: string[] = [];
   filteredDataByLength: string[] = [];
   filteredByLengthAndFirstLetter: string[] = [];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   constructor() {
-    this.observableService.state$
-      .pipe(takeUntilDestroyed())
-      .subscribe(state => {
-        this.state = state;
-      });
+    this.loadState();
+    this.loadFilteredDatas();
+  }
 
-    effect(() => {
-      this.signalState = this.observableService.state();
+  loadState() {
+    this.state = this.synchroneService.getState();
+
+    this.datas = this.synchroneService.getSortedDatas();
+  }
+
+  loadFilteredDatas() {
+    this.filteredDataByLength = this.datas.map(x => {
+      if (x.length > 10) {
+        const sliced = x.slice(0, 10);
+        return sliced + "...";
+      }
+
+      if (x.length < 5) {
+        return x.toUpperCase();
+      }
+
+      if (x.length < 3) {
+        return x;
+      }
+
+      return "";
     });
       
-    this.observableService.sortedDatas$
-      .pipe(takeUntilDestroyed())
-      .subscribe(data => {
-        this.datas = data;
-        this.filteredDataByLength = data.map(x => {
-          if (x.length > 10) {
-            const sliced = x.slice(0, 10);
-            return sliced + "...";
-          }
-    
-          if (x.length < 5) {
-            return x.toUpperCase();
-          }
-    
-          if (x.length < 3) {
-            return x;
-          }
-    
-          return "";
-        });
-    
-        this.filteredByLengthAndFirstLetter = this.filteredDataByLength.map(x => {
-          const lowered = x.toLowerCase();
-          if (lowered.charAt(0) === 'a') {
-            return x;
-          }
-    
-          return lowered;
-        });
-      });
+    this.filteredByLengthAndFirstLetter = this.filteredDataByLength.map(x => {
+      const lowered = x.toLowerCase();
+      if (lowered.charAt(0) === 'a') {
+        return x;
+      }
+
+      return lowered;
+    });
   }
 
   add(toAdd: string) {
     this.datas = [...this.datas, toAdd];
+    this.loadFilteredDatas();
   }
 
   empty() {
     this.datas = [];
+    this.loadFilteredDatas();
   }
 
   replaceData(newElements: string[]) {
     this.datas = newElements;
+    this.loadFilteredDatas();
     this.filteredByLengthAndFirstLetter = ["toto"];
   }
 
   save() {
     this.filteredDataByLength = [];
-    this.observableService.updateDatas$.next(this.datas);
+    this.synchroneService.updateDatas(this.datas);
+    this.loadState();
+    this.loadFilteredDatas();
   }
 }

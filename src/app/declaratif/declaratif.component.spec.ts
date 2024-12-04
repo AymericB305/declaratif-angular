@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeclaratifSignalComponent } from './declaratif-signal.component';
+import { DeclaratifComponent } from './declaratif.component';
 
 describe('DeclaratifSignalComponent', () => {
-  let component: DeclaratifSignalComponent;
-  let fixture: ComponentFixture<DeclaratifSignalComponent>;
+  let component: DeclaratifComponent;
+  let fixture: ComponentFixture<DeclaratifComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeclaratifSignalComponent]
+      imports: [DeclaratifComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeclaratifSignalComponent);
+    fixture = TestBed.createComponent(DeclaratifComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
