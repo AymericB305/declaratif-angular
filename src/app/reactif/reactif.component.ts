@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ObservableService } from '../services/observable.service';
 import { State } from '../services/state';
@@ -15,7 +15,6 @@ export class ReactifComponent {
   private observableService = inject(ObservableService);
 
   state: State | undefined = undefined;
-  signalState: State | undefined = undefined;
   datas: string[] = [];
   filteredDataByLength: string[] = [];
   filteredByLengthAndFirstLetter: string[] = [];
@@ -59,10 +58,6 @@ export class ReactifComponent {
       .subscribe(state => {
         this.state = state;
       });
-
-    effect(() => {
-      this.signalState = this.observableService.state();
-    });
       
     this.observableService.sortedDatas$
       .pipe(takeUntilDestroyed())

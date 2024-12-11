@@ -25,6 +25,6 @@ export class SignalService {
       .subscribe(datas => this.internalSignalState.set({
         ...this.internalSignalState(),
         datas
-      })); 
+      }));
   }
 }

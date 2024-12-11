@@ -1,6 +1,6 @@
-import { Injectable, Signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, Subject } from 'rxjs';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { State } from './state';
 
 @Injectable({
@@ -13,7 +13,6 @@ export class ObservableService {
 
   // selectors
   state$: Observable<State> = this.internalState$.asObservable();
-  state: Signal<State | undefined> = toSignal(this.internalState$);
   sortedDatas$ = this.internalState$.pipe(
     map(state => state.datas.sort()),
   );
@@ -31,6 +30,9 @@ export class ObservableService {
         takeUntilDestroyed(),
         distinctUntilChanged()
       )
-      .subscribe(([state, datas]) => this.internalState$.next({ ...state, datas }));
+      .subscribe(([state, datas]) => this.internalState$.next({
+        ...state,
+        datas
+      }));
   }
 }
